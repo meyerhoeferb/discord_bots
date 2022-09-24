@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error
+import pandas as pd
 
 
 class SqliteHelper:
@@ -29,3 +30,36 @@ class SqliteHelper:
         conn = sqlite3.connect(self.db_path)
 
         return conn
+
+    def _create_table(self, query: str):
+        """run a create table query, doesn't need to be committed
+
+        Args:
+            query (str): the create table statement to run
+
+        """
+        conn = self._create_connection()
+
+        # create cursor and execute query
+        with conn:
+            cur = conn.cursor()
+            cur.execute(query)
+
+        conn.close()
+
+    def _select_into_df(self, query: str) -> pd.DataFrame:
+        """execute a select query and return the results in a dataframe
+
+        Args:
+            query (str): select query to run
+
+        Returns:
+            pd.DataFrame: results of select in a dataframe
+        """
+        conn = self._create_connection()
+
+        # execute select query and return results in df
+        df = pd.read_sql(query, conn)
+        conn.close()
+
+        return df
