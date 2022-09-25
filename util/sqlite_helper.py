@@ -63,3 +63,23 @@ class SqliteHelper:
         conn.close()
 
         return df
+
+    def _query_with_replacement(self, query: str, data: list):
+        """run a query against the DB that uses the ? replacement thing
+
+        query should have ? where any variable data goes, and they get replaced from data in order
+
+        DO NOT use for a select, this method does not return things
+
+        Args:
+            query (str): the query to run, with the ? replacement standard for variable things
+            data (list): the data to insert, replaces ? in query in order of appearance
+        """
+        conn = self._create_connection()
+
+        # create cursor and execute query
+        with conn:
+            cur = conn.cursor()
+            cur.execute(query, data)
+
+        conn.close()
